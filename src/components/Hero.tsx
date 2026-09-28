@@ -28,7 +28,7 @@ export default function Hero() {
               Entender o problema
             </a>
           </div>
-          <dl className="mt-10 grid grid-cols-3 gap-6 text-sm">
+          <dl className="mt-10 grid grid-cols-1 gap-6 text-sm sm:grid-cols-3">
             <div>
               <dt className="text-2xl font-bold text-brand-700">30+</dt>
               <dd className="text-slate-500">banhos/dia gerenciados na régua</dd>
