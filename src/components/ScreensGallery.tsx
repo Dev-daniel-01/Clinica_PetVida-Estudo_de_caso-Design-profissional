@@ -36,25 +36,6 @@ function DashboardMock() {
   )
 }
 
-function ProntuarioMock() {
-  return (
-    <div className="space-y-3">
-      <div className="flex items-center gap-3">
-        <div className="h-10 w-10 rounded-full bg-brand-100 text-center text-lg leading-10">🐶</div>
-        <div>
-          <p className="text-sm font-semibold text-slate-800">Thor — Golden Retriever</p>
-          <p className="text-xs text-slate-500">Tutor: Marina Costa</p>
-        </div>
-      </div>
-      <div className="space-y-1 border-t border-slate-100 pt-2 text-xs text-slate-600">
-        <p>💉 Última vacina: há 11 meses</p>
-        <p>🩺 Última consulta: check-up de rotina</p>
-        <p>🛁 Último banho: há 12 dias</p>
-      </div>
-    </div>
-  )
-}
-
 function ReminderMock() {
   return (
     <div className="mx-auto w-40 rounded-2xl border border-slate-200 bg-slate-50 p-3">
@@ -79,13 +60,16 @@ export default function ScreensGallery() {
         <p className="mt-2 text-3xl font-bold text-slate-900">
           Como o dia a dia da recepção muda na prática.
         </p>
+        <p className="mt-4 text-slate-600">
+          Estas duas telas ilustram conceitos de uma versão de produção (dashboard de ocupação e
+          notificação mobile nativa). A busca de prontuário e os lembretes já são reais — teste nas
+          seções <a href="#demo" className="text-brand-700 underline">Demo</a> e{' '}
+          <a href="#prontuario" className="text-brand-700 underline">Prontuário</a> acima.
+        </p>
       </div>
-      <div className="mt-10 grid gap-6 md:grid-cols-3">
+      <div className="mt-10 grid gap-6 md:grid-cols-2">
         <BrowserFrame title="dashboard · ocupação do dia">
           <DashboardMock />
-        </BrowserFrame>
-        <BrowserFrame title="prontuário · Thor">
-          <ProntuarioMock />
         </BrowserFrame>
         <BrowserFrame title="lembrete · app do tutor">
           <ReminderMock />

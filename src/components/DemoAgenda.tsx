@@ -1,8 +1,14 @@
 import { useMemo, useState } from 'react'
-import { useLocalStorage } from '../hooks/useLocalStorage'
 import { initialAppointments, pets, professionals } from '../data/mockData'
 import type { Appointment, AppointmentType } from '../types'
-import { appointmentTypeColors, appointmentTypeLabels, hasConflict, timeToMinutes } from '../utils'
+import {
+  appointmentTypeColors,
+  appointmentTypeLabels,
+  hasConflict,
+  minutesToTime,
+  timeToMinutes,
+} from '../utils'
+import { downloadIcsFile } from '../ics'
 import ReminderPanel from './ReminderPanel'
 
 const typeDurations: Record<AppointmentType, number> = {
@@ -16,19 +22,12 @@ function todayIso() {
   return new Date().toISOString().slice(0, 10)
 }
 
-function minutesToTime(total: number): string {
-  const h = Math.floor(total / 60)
-    .toString()
-    .padStart(2, '0')
-  const m = (total % 60).toString().padStart(2, '0')
-  return `${h}:${m}`
+interface DemoAgendaProps {
+  appointments: Appointment[]
+  setAppointments: (appointments: Appointment[]) => void
 }
 
-export default function DemoAgenda() {
-  const [appointments, setAppointments] = useLocalStorage<Appointment[]>(
-    'petvida-agenda-demo',
-    initialAppointments,
-  )
+export default function DemoAgenda({ appointments, setAppointments }: DemoAgendaProps) {
   const [selectedDate, setSelectedDate] = useState(todayIso())
   const [petId, setPetId] = useState(pets[0].id)
   const [professionalId, setProfessionalId] = useState(professionals[0].id)
@@ -103,6 +102,18 @@ export default function DemoAgenda() {
     setFeedback(null)
   }
 
+  function handleAddToCalendar(apt: Appointment) {
+    downloadIcsFile(`petvida-${petName(apt.petId).toLowerCase()}-${apt.date}.ics`, {
+      uid: apt.id,
+      summary: `PetVida — ${appointmentTypeLabels[apt.type]} de ${petName(apt.petId)}`,
+      description: `Atendimento com ${professionalName(apt.professionalId)} na Clínica PetVida.`,
+      date: apt.date,
+      time: apt.startTime,
+      durationMinutes: apt.durationMinutes,
+      reminderDaysBefore: 1,
+    })
+  }
+
   return (
     <section id="demo" className="bg-slate-900 py-20 text-white">
       <div className="mx-auto max-w-6xl px-6">
@@ -114,7 +125,8 @@ export default function DemoAgenda() {
           <p className="mt-4 text-slate-300">
             Os dados abaixo são fictícios e ficam salvos só no seu navegador (localStorage) — não
             há backend nem banco de dados real nesta demo. Escolha um profissional já ocupado no
-            horário e veja o sistema recusar o agendamento.
+            horário e veja o sistema recusar o agendamento. Cada agendamento pode virar um lembrete
+            real no calendário do tutor com um clique.
           </p>
         </div>
 
@@ -156,13 +168,23 @@ export default function DemoAgenda() {
                       >
                         <div className="flex items-center justify-between gap-2">
                           <span className="font-semibold">{appointmentTypeLabels[apt.type]}</span>
-                          <button
-                            onClick={() => handleRemove(apt.id)}
-                            aria-label="Remover agendamento"
-                            className="text-slate-500 hover:text-red-600"
-                          >
-                            ×
-                          </button>
+                          <span className="flex items-center gap-1.5">
+                            <button
+                              onClick={() => handleAddToCalendar(apt)}
+                              aria-label="Adicionar ao calendário"
+                              title="Baixar lembrete .ics para o calendário do tutor"
+                              className="text-slate-500 hover:text-brand-700"
+                            >
+                              📅
+                            </button>
+                            <button
+                              onClick={() => handleRemove(apt.id)}
+                              aria-label="Remover agendamento"
+                              className="text-slate-500 hover:text-red-600"
+                            >
+                              ×
+                            </button>
+                          </span>
                         </div>
                         <p>
                           {apt.startTime} · {petName(apt.petId)}

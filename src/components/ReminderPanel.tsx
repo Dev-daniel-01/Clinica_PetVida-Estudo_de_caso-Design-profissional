@@ -1,4 +1,5 @@
 import { pets } from '../data/mockData'
+import { downloadIcsFile } from '../ics'
 import { daysUntil, formatDatePtBr } from '../utils'
 
 export default function ReminderPanel() {
@@ -7,11 +8,22 @@ export default function ReminderPanel() {
     .filter((entry) => entry.days <= 7)
     .sort((a, b) => a.days - b.days)
 
+  function handleAddToCalendar(pet: (typeof pets)[number]) {
+    downloadIcsFile(`petvida-vacina-${pet.name.toLowerCase()}.ics`, {
+      uid: `vacina-${pet.id}`,
+      summary: `PetVida — Vacina de ${pet.name} vence hoje`,
+      description: `Lembrete gerado pela PetVida Agenda para o tutor ${pet.tutorName}.`,
+      date: pet.nextVaccineDue,
+      reminderDaysBefore: 1,
+    })
+  }
+
   return (
     <aside className="h-fit rounded-xl bg-slate-800 p-5">
       <h3 className="text-sm font-semibold text-brand-400">Lembretes automáticos</h3>
       <p className="mt-1 text-xs text-slate-400">
         Prontuário integrado: a clínica vê quem precisa de vacina antes de virar lacuna na agenda.
+        O botão baixa um lembrete real (.ics) para o calendário do tutor.
       </p>
       <ul className="mt-4 space-y-3">
         {withStatus.map(({ pet, days }) => (
@@ -33,6 +45,12 @@ export default function ReminderPanel() {
                   ? 'Vacina vence hoje'
                   : `Vacina vence em ${days} dia(s) — ${formatDatePtBr(pet.nextVaccineDue)}`}
             </p>
+            <button
+              onClick={() => handleAddToCalendar(pet)}
+              className="mt-2 rounded-full border border-current px-2.5 py-1 text-[11px] font-semibold transition hover:opacity-80"
+            >
+              📅 Adicionar lembrete ao calendário
+            </button>
           </li>
         ))}
         {withStatus.length === 0 && (

@@ -2,6 +2,7 @@ const links = [
   { href: '#problema', label: 'O problema' },
   { href: '#solucao', label: 'Solução' },
   { href: '#demo', label: 'Demo' },
+  { href: '#prontuario', label: 'Prontuário' },
   { href: '#telas', label: 'Telas' },
   { href: '#arquitetura', label: 'Arquitetura' },
 ]
