@@ -131,7 +131,7 @@ export default function DemoAgenda({ appointments, setAppointments }: DemoAgenda
         </div>
 
         <div className="mt-10 grid gap-8 lg:grid-cols-[2fr_1fr]">
-          <div>
+          <div className="min-w-0">
             <div className="flex flex-wrap items-center justify-between gap-4">
               <label className="flex items-center gap-2 text-sm">
                 Data:
